@@ -34,7 +34,8 @@ const app = new Elysia()
                         userId: false,
                         bookId: false
                     }
-                }
+                },
+                requests: true
             },
             orderBy: undefined
         }

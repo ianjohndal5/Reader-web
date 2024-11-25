@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FaUser, FaClock, FaClipboardList } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { BiSolidBookAdd } from "react-icons/bi";
+import { useAuth } from '../../utils/AuthProvider';
 
 const popularBooksData = [
   {
@@ -20,6 +21,24 @@ const LibLanding = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startY, setStartY] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
+  const [popularBooksData, setPopularBooksData] = useState([]);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    const id = setTimeout(async () => {
+      const book_response  = await fetch("/api/v1/books?sort=latest", { 
+        method: "GET",
+        headers: {
+          "Authorization": token
+        }
+      });
+      const book_data = await book_response.json();
+
+      setPopularBooksData(book_data);
+    }, 1000);
+
+    return () => clearTimeout(id);
+  }, []);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -78,14 +97,14 @@ const LibLanding = () => {
               <tr key={book.id}>
                 <td className="p-4 border-b border-gray-200">
                   <img
-                    src={book.cover}
+                    src={`/api/v1/file/${book.cover}`}
                     alt={book.title}
                     className="h-16 w-16 object-cover rounded-md"
                   />
                 </td>
                 <td className="p-4 border-b border-gray-200">{book.title}</td>
-                <td className="p-4 border-b border-gray-200">{book.rating}</td>
-                <td className="p-4 border-b border-gray-200">{book.author}</td>
+                <td className="p-4 border-b border-gray-200">{book.requests.length}</td>
+                <td className="p-4 border-b border-gray-200">{book.author.name}</td>
                 <td
                   className={`p-4 border-b border-gray-200 ${
                     book.status === "Available" ? "text-green-600" : "text-red-600"
