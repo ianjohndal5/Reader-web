@@ -83,8 +83,10 @@ const Landing = () => {
       const category_data = await category_response.json();
 
 
-      setLatestBooksData(await book_data);
-      setCategories(await category_data);
+      setLatestBooksData(book_data);
+      setCategories(category_data);
+
+      console.log(book_data)
     }
 
     load();

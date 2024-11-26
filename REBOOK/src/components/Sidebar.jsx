@@ -48,12 +48,12 @@ function Sidebar() {
             ) : (
               <FontAwesomeIcon
                 icon={faUser} // Use the Font Awesome user icon
-                className="w-12 h-12 text-white mr-2" // Style the Font Awesome icon
+                className="w-9 h-9 text-black mr-1" // Style the Font Awesome icon
               />
             )}
           </Link>
           <h1 className="text-black mb-2 pt-3">
-            Welcome,  <br/> <span className="font-bold">{name}</span>
+            Welcome,  <span className="font-bold">{name}</span>
           </h1>
         </div>
         {/* Navigation Links */}
