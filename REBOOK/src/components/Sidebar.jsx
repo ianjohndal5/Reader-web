@@ -32,7 +32,6 @@ function Sidebar() {
     fetchData();
 
   }, [validate]);
-
   return (
     <div className="w-[100%] bg-teal-500 text-white h-full flex flex-col justify-between p-4 border-r-2 border-teal-400">
       {/* User Section */}
@@ -48,12 +47,20 @@ function Sidebar() {
             ) : (
               <FontAwesomeIcon
                 icon={faUser} // Use the Font Awesome user icon
+<<<<<<< HEAD
                 className="w-9 h-9 text-black mr-1" // Style the Font Awesome icon
+=======
+                className="w-9 h-9 items-left text-black mr-2 " // Style the Font Awesome icon
+>>>>>>> afa03fa9e6e8461e0f257dfcbf471041f153c889
               />
             )}
           </Link>
           <h1 className="text-black mb-2 pt-3">
+<<<<<<< HEAD
             Welcome,  <span className="font-bold">{name}</span>
+=======
+            Welcome, <span className="font-bold">{name}</span>
+>>>>>>> afa03fa9e6e8461e0f257dfcbf471041f153c889
           </h1>
         </div>
         {/* Navigation Links */}
