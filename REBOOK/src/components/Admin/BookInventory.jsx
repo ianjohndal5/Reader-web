@@ -232,8 +232,9 @@ const BookInventory = () => {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold p-4">Inventory</h2>
-        <div className="flex flex-row justify-end mb-3 mr-2">
+        
+        <div className="flex flex-row justify-between mb-3 mr-2">
+        <h2 className="text-2xl font-bold">Inventory</h2>
               <button
                 className="bg-teal-600 text-white p-2 rounded-md hover:bg-teal-200 hover:text-black"
                 onClick={() => navigate("/librarian/inventory/add")}

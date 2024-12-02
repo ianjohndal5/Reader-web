@@ -34,7 +34,9 @@ const app = new Elysia()
                         userId: false,
                         bookId: false
                     }
-                }
+                },
+                requests: true,
+                ratings: true
             },
             orderBy: undefined
         }
@@ -47,8 +49,13 @@ const app = new Elysia()
 
 
         const books = await prisma.book.findMany(config);
+        
 
-        return books.map(book => ({...book, status: book.available <= 0 ? 'Unavailable' : 'Available'}));
+        return books.map(book => 
+            ({...book, 
+            status: book.available <= 0 ? 'Unavailable' : 'Available',
+            rating: book.ratings.length
+        }));
     }, {
         query: t.Object({
             sort: t.Optional(t.String())
