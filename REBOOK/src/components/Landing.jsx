@@ -79,7 +79,12 @@ const Landing = () => {
       });
       const book_data = await book_response.json();
 
-      const category_response  = await fetch("/api/v1/categories", { method: "GET" });
+      const category_response  = await fetch("/api/v1/categories", { 
+        method: "GET",
+        headers: {
+          "Authorization": token
+        }
+      });
       const category_data = await category_response.json();
 
 
@@ -90,7 +95,7 @@ const Landing = () => {
     }
 
     load();
-  }, [setLatestBooksData]) // 5 sec
+  }, [setLatestBooksData, token]) // 5 sec
 
   return (
     <div className="bg-teal-100 flex flex-col w-full h-full min-h-screen">

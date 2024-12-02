@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { useAuth } from '../utils/AuthProvider';
 
 const Category = () => {
   const { categoryId } = useParams();
@@ -14,6 +15,8 @@ const Category = () => {
 
   const [filteredBooks, setFilteredBooks] = useState([]);
 
+  const { token } = useAuth();
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -22,7 +25,12 @@ const Category = () => {
         const books = await bookResponse.json();
         
         // Categories
-        const categoryResponse = await fetch("/api/v1/categories");
+        const categoryResponse = await fetch("/api/v1/categories", {
+          method: "GET",
+          headers: {
+            "Authorization": token
+          }
+      });
         const categories = await categoryResponse.json();
         
         setCategories(categories);
@@ -41,7 +49,7 @@ const Category = () => {
     };
 
     load();
-  }, [categoryId]);
+  }, [categoryId, token]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -55,19 +63,21 @@ const Category = () => {
   const searchHandler = useCallback((e) => {
     const term = e.target.value;
     setSearchTerm(term);
+  }, []);
 
-    if (term === '') {
-      setFilteredBooks(booksData);
-    } else {
-      const fe = booksData.filter(book => {
-        return book.categoryId === parseInt(categoryId) && 
-               (term === '' || 
-                book.title.toLowerCase().includes(term.toLowerCase()) || 
-                book.author.name.toLowerCase().includes(term.toLowerCase()));
-      });
-      setFilteredBooks(fe);
-    }
-  }, [booksData, categoryId]);
+  useEffect(() => {
+
+    setFilteredBooks(() => 
+      booksData.filter(book => {
+        return book.categoryId === parseInt(categoryId) &&
+          (searchTerm === '' ||
+            book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            book.author.name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+      })
+    )
+
+  }, [booksData, categoryId, searchTerm]);
 
   return (
     <div className="bg-teal-100 flex flex-col w-full h-full min-h-screen">
