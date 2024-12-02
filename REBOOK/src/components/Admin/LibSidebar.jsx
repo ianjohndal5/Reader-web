@@ -55,11 +55,7 @@ function LibSidebar() {
             ) : (
               <FontAwesomeIcon
                 icon={faUser}
-<<<<<<< HEAD
-                className="w-9 h-9 text-black mr-1"
-=======
                 className="w-9 h-9 text-black mr-2"
->>>>>>> afa03fa9e6e8461e0f257dfcbf471041f153c889
               />
             )}
           </Link>
