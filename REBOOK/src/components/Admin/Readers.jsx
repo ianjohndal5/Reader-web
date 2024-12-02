@@ -1,11 +1,40 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaSearch, FaTimes, FaChevronDown, FaFilter } from 'react-icons/fa';
 import { useAuth } from '../../utils/AuthProvider';
 import { formatDate } from "../../utils/date"
 
 const statuses = ["All", "Suspended", "Not Suspended"];
-const dateFilters = ["Yesterday", "Last 7 Days", "Last 30 Days", "This Month"];
+const dateFilters = [
+  { id: 0, label: "All" },
+  { id: 1, label: "Yesterday" }, 
+  { id: 2, label: "Last 7 Days" }, 
+  { id: 3, label: "Last 30 Days"}, 
+  { id: 4, label: "This Month" }
+];
+
+const filterByDate = (date, selectedDateFilter) => {
+  const dateRegistered = new Date(date);
+  const today = new Date();
+  switch (selectedDateFilter.id) {
+    case 1:
+      { const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      return dateRegistered.toDateString() === yesterday.toDateString(); }
+    case 2:
+      { const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(today.getDate() - 7);
+      return dateRegistered >= sevenDaysAgo; }
+    case 3:
+      { const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+      return dateRegistered >= thirtyDaysAgo; }
+    case 4:
+      return dateRegistered.getMonth() === today.getMonth() && dateRegistered.getFullYear() === today.getFullYear();
+    default:
+      return true;
+  }
+};
 
 const Readers = () => {
   const { token } = useAuth()
@@ -37,16 +66,20 @@ const Readers = () => {
   useEffect(() => {
     setFilteredReaders(() => {
       return readersData.filter((reader) => {
+        // filter by search
         const matchesSearch = reader.username.toLowerCase().includes(searchTerm.toLowerCase());
+        // filter by status
         const matchesStatus = selectedStatus === "All" || reader.readerStatus === selectedStatus;
-        //const matchesDate = filterByDate(reader.dateRegistered);
-        return matchesSearch && matchesStatus //&& matchesDate;
+        // filter by registration
+        const matchesRegistration = filterByDate(reader.createdAt, selectedDateFilter)
+
+        return matchesSearch && matchesStatus && matchesRegistration //&& matchesDate;
       })
     })
 
     
 
-  }, [readersData, searchTerm, selectedStatus])
+  }, [readersData, searchTerm, selectedDateFilter, selectedStatus])
 
   const toggleFilterDropdown = () => setFilterDropdownOpen(!isFilterDropdownOpen);
   const clearSearch = () => setSearchTerm('');
@@ -59,29 +92,6 @@ const Readers = () => {
   const handleDateFilterSelect = (filter) => {
     setSelectedDateFilter(filter);
     setFilterDropdownOpen(false);
-  };
-
-  const filterByDate = (date) => {
-    const dateRegistered = new Date(date);
-    const today = new Date();
-    switch (selectedDateFilter) {
-      case "Yesterday":
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-        return dateRegistered.toDateString() === yesterday.toDateString();
-      case "Last 7 Days":
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(today.getDate() - 7);
-        return dateRegistered >= sevenDaysAgo;
-      case "Last 30 Days":
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(today.getDate() - 30);
-        return dateRegistered >= thirtyDaysAgo;
-      case "This Month":
-        return dateRegistered.getMonth() === today.getMonth() && dateRegistered.getFullYear() === today.getFullYear();
-      default:
-        return true;
-    }
   };
 
   return (
@@ -149,7 +159,7 @@ const Readers = () => {
                           onChange={() => handleDateFilterSelect(filter)}
                           className="w-4 h-4 text-teal-500"
                         />
-                        <span>{filter}</span>
+                        <span>{filter.label}</span>
                       </li>
                     ))}
                   </ul>
