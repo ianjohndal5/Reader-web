@@ -4,6 +4,7 @@ import { useAuth } from '../utils/AuthProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faArrowPointer } from '@fortawesome/free-solid-svg-icons';
 
 function BookDetails() {
   const { bookId } = useParams(); // Get the book title from the URL
@@ -13,6 +14,8 @@ function BookDetails() {
   const { token, validate } = useAuth();
 
   const [isRated, setIsRated] = useState(false);
+
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -80,6 +83,23 @@ function BookDetails() {
     alert("rated book!")
   }
 
+  const commentHandler = async () => {
+    const response = await fetch("/api/v1/book/comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token
+      },
+      body: JSON.stringify({
+        text: comment,
+        bookId: bookId
+      })
+    });
+
+    const result = await response.json();
+    setComment("");
+  }
+
   return (
     <div className="book-details p-6 h-screen">
       {/* Chevron for navigating back */}
@@ -127,6 +147,10 @@ function BookDetails() {
         {/* Comments section */}
         <div className="flex-1">
           <h2 className="text-2xl font-bold">Comments</h2>
+          <div className="flex flex-row gap-2">
+              <input onChange={(e) => setComment(e.target.value) } value={comment} className="flex-grow rounded-xl px-2 py-2" type="text" placeholder="Type a comment..."/>
+              <button className="bg-teal-300 hover:bg-teal-400 p-2 rounded-xl" onClick={commentHandler}> Comment </button>
+          </div>
           <div
             className="mt-2 space-y-2 pr-2"
             style={{
@@ -140,7 +164,7 @@ function BookDetails() {
                 <p className="font-semibold">{comment.user.name}</p>
                 <p className="text-gray-600">{comment.text}</p>
               </div>
-            ))}
+            ))} 
           </div>
         </div>
       </div>

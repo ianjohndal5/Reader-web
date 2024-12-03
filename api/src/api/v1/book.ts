@@ -32,8 +32,12 @@ const app = new Elysia()
                             }
                         },
                         userId: false,
-                        bookId: false
-                    }
+                        bookId: false,
+                        createdAt: true
+                    },
+                    orderBy: [ 
+                        { createdAt: "desc" }
+                    ]
                 },
                 requests: true,
                 ratings: true
@@ -243,6 +247,49 @@ const app = new Elysia()
         }),
         params: t.Object({
             id: t.String()
+        })
+    })
+
+    // comment
+    .post("/book/comment", async ({ body, prisma, jwt, headers }) => {
+        const auth:any = await jwt.verify(headers.authorization)
+
+        if(!auth) {
+            throw new Error("Unauthorized!")
+        }
+
+        try {
+            const { text, bookId } = body;
+
+            // creating comment
+            const book_added = await prisma.comment.create({
+                data: {
+                    text: text,
+                    book: {
+                        connect: {
+                            id: parseInt(bookId)
+                        }
+                    },
+                    user: {
+                        connect: {
+                            id: parseInt(auth.id)
+                        }
+                    }
+                }
+            })
+            
+            return book_added;
+        }
+        catch(err) {
+            throw err;
+        }
+    }, {
+        body: t.Object({
+            text: t.String(),
+            bookId: t.String(),
+        }),
+        headers: t.Object({
+            authorization: t.String()
         })
     })
 
