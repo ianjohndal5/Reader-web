@@ -50,7 +50,10 @@ const Best = () => {
 
   useEffect(() => {
     const load = async () => {
-      const response = await fetch("/api/v1/books?sort=latest", { method: "GET" });
+      const response = await fetch("/api/v1/books?sort=latest", { 
+        method: "GET" 
+      });
+      console.log(response)
       const data = await response.json();
       setLatestBooksData(data);
     }

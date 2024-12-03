@@ -33,11 +33,7 @@ const app = new Elysia()
                         },
                         userId: false,
                         bookId: false,
-                        createdAt: true
                     },
-                    orderBy: [ 
-                        { createdAt: "desc" }
-                    ]
                 },
                 requests: true,
                 ratings: true
